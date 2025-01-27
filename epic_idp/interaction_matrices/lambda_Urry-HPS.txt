@@ -1,0 +1,21 @@
+# Urry normalised hydropathy scale given in Table S2 of Regy, Thompson, Kim and Mittal, Protein Science, 2021 (Improved coarse-grained model for studying sequence dependent phase separation of disordered proteins).
+TRP	1.0
+TYR	0.897059
+PHE	0.82353
+HIS	0.764707
+PRO	0.758824
+LEU	0.720589
+ILE	0.705883
+MET	0.676471
+VAL	0.664707
+CYS	0.64706
+ALA	0.602942
+ASN	0.588236
+SER	0.588236
+THR	0.588236
+GLY	0.57353
+ARG	0.558824
+GLN	0.558824
+LYS	0.382354
+ASP	0.294119
+GLU	0.0
