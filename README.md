@@ -16,6 +16,19 @@ where the three terms correspond to:
 - $\left( \chi_{\rm e}^{(0)} \right)_{ij}$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
 - $\left( \chi_{\rm e}^{(1)} \right)_{ij}$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.
 
+The individual contributions are given by
+$$
+\left( \chi_{\rm h}^{(0)} \right)_{ij} = - \left( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
+$$
+
+$$
+\left( \chi_{\rm e}^{(0)} \right)_{ij} = - \frac{2 \pi l_{\rm B} \rho_0 }{\kappa^2} \sigma_i \sigma_j \, . 
+$$
+
+$$
+\left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
+$$
+
 ### Usage
 
 To use the package, you first define a `chi_effective_calculator` instance which takes interaction parameter values as input, e.g.
@@ -72,3 +85,8 @@ cec.calc_chi_eff('seq1', 'seq2')
 # Returns the full M-by-M matrix of chi parameter (M is the number of added IDPs)
 cec.calc_all_chi_eff()
 ```
+
+
+### Example
+
+![Effective Chi Parameter Calculation](chi_eff_sv_sequences.png)
