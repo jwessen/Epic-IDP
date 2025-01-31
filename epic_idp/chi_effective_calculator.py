@@ -103,7 +103,6 @@ class chi_effective_calculator:
 
         self.species = {}  # Dictionary of all molecular species to consider for chi_eff calculations
 
-        # RPA related. y = b*k
         self.nk = int(3e2)
         if self.kappa == 0:
             eps = 1e-15
@@ -198,7 +197,10 @@ class chi_effective_calculator:
         mol1 = self.species[name1]
         mol2 = self.species[name2]
 
-        chi = - 2. * np.pi * self.lB / self.kappa**2 * mol1.sig_tot * mol2.sig_tot / mol1.N / mol2.N
+        if mol1.sig_tot * mol2.sig_tot != 0:
+            chi = - 2. * np.pi * self.lB / self.kappa**2 * mol1.sig_tot * mol2.sig_tot / mol1.N / mol2.N
+        else:
+            chi = 0
         return chi * self.rho0
 
     # RPA electrostatics
