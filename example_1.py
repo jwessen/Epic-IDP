@@ -1,6 +1,7 @@
 from epic_idp import chi_effective_calculator
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'Times New Roman'
 
 # E/K 50-mer sequences from Das and Pappu, PNAS, 2013. DOI: https://www.pnas.org/doi/abs/10.1073/pnas.1304749110
 seqs = {}
