@@ -8,9 +8,9 @@ EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered 
 
 The main function of the program is to compute $\chi_{ij}$ using the following equation:
 
-$$
+$$`
 \chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
-$$
+`$$
 where the three terms correspond to:
 - $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$\pi$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
 - $\left( \chi_{\rm e}^{(0)} \right)_{ij}$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
