@@ -18,7 +18,7 @@ where the three terms correspond to:
 
 The individual contributions are given by
 $$
-\left( \chi_{\rm h}^{(0)} \right)_{ij} = - \left( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
+( \chi_{\rm h}^{(0)} )_{ij} = - ( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) ) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
 $$
 
 $$
