@@ -1,12 +1,24 @@
 import numpy as np
 from .interaction_scale_functions import interaction_functions
-import sys
-import matplotlib.pyplot as plt
 
 class chi_effective_calculator:
 
-    def __init__(self, rho0=1. , lB=9437.9 , kappa=11.861 , a=0.24651, interaction_matrix='KH-D', electrostatics_MFT=True, hydrophobicity_MFT=False, electrostatics_RPA=True):
-        '''
+    """
+    A class for calculating effective Flory-Huggins interaction parameters. 
+
+    Parameters
+    ----------
+    rho0 : float, optional
+        Reference concentration. Only provides an over-all scaling of effective chi-parameters. The default is 1.
+    lB : float, optional
+        Bjerrum length in units of bond length. The default is 9437.9.
+    kappa : float, optional
+        Inverse Debye screening length in units of inverse bond length. The default is 11.861.
+    a : float, optional
+        Smearing length for RPA integral in units of bond length. The default is 0.24651.
+    Vh0 : float, optional
+        Volume integral of short-range interaction potential. Setting Vh0=0 means that non-electrostatic interactions are neglected. The default is 0.
+    interaction_matrix : str, optional
         Options for the interaction_matrix are:
             'KH-D'
             'Mpipi'
@@ -16,18 +28,75 @@ class chi_effective_calculator:
             'HPS'
             'URRY'
             'FB'
-        '''
+        The default is 'KH-D'.
+    electrostatics_RPA : bool, optional
+        Whether to include RPA electrostatics. The default is True.
+
+    Methods
+    ----------
+    add_IDP(name, sequence, g0=None, verbose=True)
+        Add a sequence to the chi_effective_calculator object.
+    remove_IDP(name)
+        Remove a sequence from the chi_effective_calculator object.
+    calc_chi_eff(name1, name2)
+        Calculate the effective Flory-Huggins interaction parameter between two sequences. The sequences must be added to the chi_effective_calculator object.
+    calc_all_chi_eff()
+        Calculate the matrix of effective Flory-Huggins interaction parameters between all added sequences.
+    set_rho0(rho0)
+        Set the reference concentration.
+    set_lB(lB)
+        Set the Bjerrum length.
+    set_kappa(kappa)
+        Set the inverse Debye screening length.
+    set_a(a)
+        Set the smearing length for RPA integral.
+    """
+
+    def __init__(self, rho0=1. , lB=9437.9 , kappa=11.861 , a=0.24651, Vh0 = 0, interaction_matrix='KH-D', electrostatics_RPA=True):
+        """
+        Initialize the chi_effective_calculator object. 
+
+        Parameters
+        ----------
+        rho0 : float, optional
+            Reference concentration. Only provides an over-all scaling of effective chi-parameters. The default is 1.
+        lB : float, optional
+            Bjerrum length in units of bond length. The default is 9437.9.
+        kappa : float, optional
+            Inverse Debye screening length in units of inverse bond length. The default is 11.861.
+        a : float, optional
+            Smearing length for RPA integral in units of bond length. The default is 0.24651.
+        Vh0 : float, optional
+            Volume integral of short-range interaction potential. Setting Vh0=0 means that non-electrostatic interactions are neglected. The default is 0.
+        interaction_matrix : str, optional
+            Only used when Vh0 is not zero. Options for the interaction_matrix are:
+                'KH-D'
+                'Mpipi'
+                'Mpipi_RNA' (24-by-24 matrix, includes RNA bases)
+                'CALVADOS1'
+                'CALVADOS2'
+                'HPS'
+                'URRY'
+                'FB'
+            The default is 'KH-D'.
+        electrostatics_RPA : bool, optional
+            Whether to include the RPA contribution electrostatics. The default is True.
+        """
 
         # All inputs are given in units of the bond length b
 
         self.rho0  = rho0    # Total concentration. Only provides an over-all scaling of effective chi-parameters.
         self.lB    = lB      # Bjerrum length
         self.kappa = kappa   # Inverse Debye screening length. kappa = sqrt( 8*pi*lB*[NaCl] )
-        self.a     = a       # Smearing length for RPA integral. 
+        self.a     = a       # Smearing length for RPA integral.
+        self.Vh0   = Vh0     # Volume integral of short-range interaction potential (Setting Vh0=0 means that non-electrostatic interactions are neglected)
 
         # Interactions to use
-        self.electrostatics_MFT = electrostatics_MFT
-        self.hydrophobicity_MFT = hydrophobicity_MFT
+        if Vh0 == 0:
+            self.hydrophobicity_MFT = False
+        else:
+            self.hydrophobicity_MFT = True
+        self.electrostatics_MFT = True
         self.electrostatics_RPA = electrostatics_RPA
 
         self.isf = interaction_functions(interaction_matrix)
@@ -35,7 +104,6 @@ class chi_effective_calculator:
         self.species = {}  # Dictionary of all molecular species to consider for chi_eff calculations
 
         # RPA related. y = b*k
-        #self.nk = int(4e3)
         self.nk = int(3e2)
         if self.kappa == 0:
             eps = 1e-15
@@ -51,20 +119,51 @@ class chi_effective_calculator:
 
     # Set params
     def set_rho0(self, rho0):
+        """
+        Set the reference concentration rho0.
+        """
         self.rho0 = rho0
     
     def set_lB(self, lB):
+        """
+        Set the Bjerrum length lB.
+        """
         self.lB = lB
     
     def set_kappa(self, kappa):
+        """
+        Set the inverse Debye screening length kappa.
+        """
         self.kappa = kappa
     
     def set_a(self, a):
+        """
+        Set the smearing length for RPA integral a.
+        """
         self.a = a
         self.Gamma4 = np.exp(-2.*a**2 * self.k2)
 
     # Add a sequence
     def add_IDP(self, name, sequence, g0 = None, verbose=True):
+        """
+        Add a sequence to the chi_effective_calculator object.
+
+        Parameters
+        ----------
+        name : str
+            Name of the sequence.
+        sequence : str
+            Fasta sequence (one-letter code).
+        g0 : numpy.ndarray, optional
+            Electric charge form factor $g(k) = N^{-1} \sum_{i,j=1}^N \sigma_i \sigma_j \exp(-|i-j|b^2 k^2/ 6. )$. Computes it if not provided.
+        verbose : bool, optional
+            Print progress. The default is True.
+
+        Returns
+        -------
+        None.
+
+        """
         if verbose:
             print("Adding",name,"... (N="+str(len(sequence))+")")
         self.species[name] = _GaussianChain(self, name, sequence, g0=g0)
@@ -72,6 +171,19 @@ class chi_effective_calculator:
             print("  Done!")
 
     def remove_IDP(self, name):
+        """
+        Remove a sequence from the chi_effective_calculator object.
+
+        Parameters
+        ----------
+        name : str
+            Name of the sequence to remove.
+
+        Returns
+        -------
+        None.
+
+        """
         self._check_if_molecules_added(name)
         del self.species[name]
 
@@ -81,7 +193,7 @@ class chi_effective_calculator:
                 raise ValueError("[ERROR] Molecule "+name+" has not been added. Added molecules are: "+', '.join( list( self.species.keys()) ) )
 
     # MFT electrostatics
-    def calc_chi_e_MFT(self, name1, name2):
+    def _calc_chi_e_MFT(self, name1, name2):
         self._check_if_molecules_added(name1,name2)
         mol1 = self.species[name1]
         mol2 = self.species[name2]
@@ -90,47 +202,61 @@ class chi_effective_calculator:
         return chi * self.rho0
 
     # RPA electrostatics
-    def calc_chi_e_RPA(self, name1, name2, ax=None):
+    def _calc_chi_e_RPA(self, name1, name2):
         self._check_if_molecules_added(name1,name2)
         mol1 = self.species[name1]
         mol2 = self.species[name2]
 
         integrand = self.k2 / (self.k2 + self.kappa**2)**2 * self.Gamma4 * mol1.g0 * mol2.g0
-        integrand_approx = self.k2 /self.kappa**4 * self.Gamma4 * mol1.g0 * mol2.g0
-
         chi = 2. * np.pi * self.lB**2 * np.sum(integrand)*self.dk
-
-        if ax is not None:
-            ax.plot(self.k, integrand,'-o')
-            ax.plot(self.k, integrand_approx,'-')
 
         return chi * self.rho0
     
-    # MFT hydrophobicity (not yet implemented)
-    def calc_chi_h(self, name1, name2):
+    # MFT hydrophobicity (or other short-range non-electrostatic interactions)
+    def _calc_chi_h(self, name1, name2):
         self._check_if_molecules_added(name1,name2)
 
         seq1 = self.species[name1].sequence
         seq2 = self.species[name2].sequence
 
-        chi_h = self.isf.chi_eff_pair(seq1,seq2)
+        chi_h = -0.5*self.Vh0 * self.isf.calculate_average_interaction_energy(seq1,seq2)
 
         return chi_h * self.rho0
     
-    # Calculate total chi_eff
-    def calc_chi_eff(self, name1, name2, ax=None):
-        chi_e_MFT = self.calc_chi_e_MFT(name1, name2) if self.electrostatics_MFT else 0
-        chi_e_RPA = self.calc_chi_e_RPA(name1, name2, ax) if self.electrostatics_RPA else 0
-        chi_h     = self.calc_chi_h(name1, name2)     if self.hydrophobicity_MFT else 0
+    def calc_chi_eff(self, name1, name2):
+        """
+        Calculate the effective Flory-Huggins interaction parameter between two sequences. 
 
-        #print("Electrostatics: RPA/MFT = ",chi_e_RPA/chi_e_MFT)
-        #print("MFT:",chi_e_MFT,"RPA:",chi_e_RPA,"Hydrophobicity:",chi_h)
+        Parameters
+        ----------
+        name1 : str
+            Name of the first sequence. (Must be added to the chi_effective_calculator object)
+        name2 : str
+            Name of the second sequence. (Must be added to the chi_effective_calculator object)
+
+        Returns
+        -------
+        chi_eff : float
+            The effective Flory-Huggins interaction parameter between the two sequences.
+        """
+
+        chi_e_MFT = self._calc_chi_e_MFT(name1, name2) if self.electrostatics_MFT else 0
+        chi_e_RPA = self._calc_chi_e_RPA(name1, name2) if self.electrostatics_RPA else 0
+        chi_h     = self._calc_chi_h(name1, name2)     if self.hydrophobicity_MFT else 0
 
         chi_eff = chi_e_MFT + chi_e_RPA + chi_h
         return chi_eff
 
     # Calculates to chi_eff matrix of all added species
     def calc_all_chi_eff(self):
+        """
+        Calculate the effective Flory-Huggins interaction parameter matrix between all added sequences.
+
+        Returns
+        -------
+        chi_eff : numpy.ndarray
+            The effective Flory-Huggins interaction parameter matrix between all added sequences. 
+        """
         names = np.array( list(self.species.keys()) )
 
         chi_eff = np.zeros((len(names),len(names)))
@@ -143,7 +269,6 @@ class chi_effective_calculator:
                 chi_eff[j,i] = chi_eff[i,j]
         
         return chi_eff
-
 
 class _GaussianChain:
     def __init__(self, cec, name, sequence, g0 = None):
@@ -162,7 +287,3 @@ class _GaussianChain:
             self.g0 = np.einsum( 'a,b,abi->i', self.sig, self.sig, connection_tensor ) / self.N
         else:
             self.g0 = g0
-
-        # plt.plot(self.cec.y, self.g)
-        # plt.plot(self.cec.y, self.g0)
-        # plt.show()

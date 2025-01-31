@@ -8,5 +8,4 @@ random phase approximation theory.
 # Version of the EPIC-IDP package
 __version__ = "0.1"
 
-from .chi_effective_calculator import chi_effective_calculator#, _GaussianChain
-#from .interaction_scale_functions import interaction_functions
+from .chi_effective_calculator import chi_effective_calculator

@@ -2,7 +2,60 @@ import numpy as np
 import os
 
 class interaction_functions:
+    """
+    This class contains the functions to calculate the average short-range non-electrostatic interaction strength between two sequences.
+
+    Parameters
+    ----------
+    scheme_str : str
+        The name of the interaction scheme to use. The available schemes are:
+        - 'KH-D' : Taken from S3 Data in "Sequence determinants of protein phase behavior from a coarse-grained model", Dignon et al (2018), PLoS Computational Biology, https://doi.org/10.1371/journal.pcbi.1005941
+        - 'Mpipi' : Interaction parameters from Joseph et al. Physics-driven coarse-grained model for biomolecular phase separation with near-quantitative accuracy. Nat Comput Sci 1, 732–743 (2021). https://doi.org/10.1038/s43588-021-00155-3. Use this scheme if you are only working with amino-acid sequences and no RNA bases.
+        - 'Mpipi_RNA' : Same as 'Mpipi', but with additional interaction parameters for RNA bases (denoted using lower-case symbols 'a', 'c', 'g' and 'u'.).
+        - 'CALVADOS1' : CALVADOS1 column of "residues.csv" at https://github.com/KULL-Centre/CALVADOS (27 September, 2022)
+        - 'CALVADOS2' : CALVADOS2 column of "residues.csv" at https://github.com/KULL-Centre/CALVADOS (27 September, 2022)
+        - 'HPS' : Lambda_i from Table S1 in in "Sequence determinants of protein phase behavior from a coarse-grained model", Dignon et al (2018), PLoS Computational Biology, https://doi.org/10.1371/journal.pcbi.1005941. This corresponds to their “HPS” model.
+        - 'URRY' : Urry normalised hydropathy scale given in Table S2 of Regy, Thompson, Kim and Mittal, Protein Science, 2021 (Improved coarse-grained model for studying sequence dependent phase separation of disordered proteins).
+        - 'HPS' : Lambda_i from Table S1 in in "Sequence determinants of protein phase behavior from a coarse-grained model", Dignon et al (2018), PLoS Computational Biology, https://doi.org/10.1371/journal.pcbi.1005941. This corresponds to their “HPS” model.
+
+    Attributes
+    ----------
+    scheme_str : str
+        The name of the interaction scheme to use.
+    scheme_int : int
+        The integer index that identifies the interaction scheme.
+    all_res : list
+        A list of all residues in the interaction scheme.
+    Nres : int
+        The number of residues in the interaction scheme.
+    res_to_ind : dict
+        A dictionary that maps residue names to their integer index.
+    residue_charges : np.array
+        The electric charges of the residues in the interaction scheme.
+    eps_matr : np.array
+        The short-range interaction matrix for the interaction scheme.
+
+    Methods
+    -------
+    charge_from_fasta(seq)
+        Calculate the electric charge sequence given a one-letter amino-acid sequence.
+    calculate_average_interaction_energy(seq1, seq2)
+        Calculate the average short-range non-electrostatic interaction strength between two sequences. Returns the value of $\sum_{i=1}^{N_1} \sum_{j=1}^{N_2} \epsilon_{ij} / (N_1 N_2) $, where $N_1$ and $N_2$ are the lengths of the two sequences, and $\epsilon_{ij}$ is the interaction strength between residues $i$ and $j$.
+    """
+
     def __init__( self, scheme_str ):
+        """
+        Initialize the interaction_functions object. 
+
+        Parameters
+        ----------
+        scheme_str : str
+            This has to be one of the following strings: 'KH-D', 'Mpipi', 'Mpipi_RNA', 'CALVADOS1', 'CALVADOS2', 'HPS', 'URRY', 'FB'.
+
+        Returns
+        -------
+        None
+        """
         
         all_schemes = {'KH-D'      : 0 ,\
                        'Mpipi'     : 1 ,\
@@ -17,7 +70,7 @@ class interaction_functions:
         base_directory = os.path.dirname(__file__) + '/interaction_matrices/'
         files = {'KH-D'      : 'eps_KH-D.txt'        ,\
                  'Mpipi'     : 'eps_Mpipi.txt'       ,\
-                 'Mpipi_RNA' : 'eps_Mpipi.txt'       ,\
+                 'Mpipi_RNA' : 'eps_Mpipi_RNA.txt'   ,\
                  'CALVADOS1' : 'lambda_CALVADOS.txt' ,\
                  'CALVADOS2' : 'lambda_CALVADOS.txt' ,\
                  'HPS'       : 'lambda_HPS.txt'      ,\
@@ -117,7 +170,6 @@ class interaction_functions:
             q, lambd = np.loadtxt(file,dtype=str).T
             mu, Delta = 1,0
             val = np.array( [float(l) for l in lambd] )
-            #matr = np.zeros((self.Nres,self.Nres))
             for i in range(self.Nres):
                 for j in range(self.Nres):
                     r1 = self.res_to_ind[ res3_to_res1[ q[i] ] ]
@@ -127,7 +179,6 @@ class interaction_functions:
             q, lambd = np.loadtxt(file,dtype=str).T
             mu, Delta = 1, 0.08
             val = np.array( [float(l) for l in lambd] )
-            #matr = np.zeros((self.Nres,self.Nres))
             for i in range(self.Nres):
                 for j in range(self.Nres):
                     r1 = self.res_to_ind[ res3_to_res1[ q[i] ] ]
@@ -137,38 +188,25 @@ class interaction_functions:
             q, lambd = np.loadtxt(file,dtype=str).T
             mu, Delta = 1, 0
             val = np.array( [float(l) for l in lambd] )
-            #matr = np.zeros((self.Nres,self.Nres))
             for i in range(self.Nres):
                 for j in range(self.Nres):
                     r1 = self.res_to_ind[ res3_to_res1[ q[i] ] ]
                     r2 = self.res_to_ind[ res3_to_res1[ q[j] ] ]
                     self.eps_matr[ r1 , r2 ] = - ( 0.5 * (val[i] + val[j]) * mu - Delta)
 
-        self.lambd, self.Q = np.linalg.eig( self.eps_matr ) # lambd - eigenvalues,  Q - eigenvectors
-
-        # sort according to |lambda| (largest first)
-        I = np.flip( np.argsort(np.abs(self.lambd)) )
-        self.lambd = self.lambd[I]
-        self.Q     = self.Q[:,I]
-
-
     def charge_from_fasta(self,seq):
+        """
+        Calculate the electric charge sequence given a one-letter amino-acid sequence.
+        """
         sig = np.array([ self.residue_charges[self.res_to_ind[r]] for r in seq])
         return sig
 
-    def chi_eff_pair(self, seq1, seq2, norm=1.):
-        chi = np.sum( [[ self.eps_matr[ self.res_to_ind[r1], self.res_to_ind[r2] ] for r1 in seq1] for r2 in seq2] ) / np.abs(norm)
+    def calculate_average_interaction_energy(self, seq1, seq2):
+        """
+        Calculate the average short-range non-electrostatic interaction strength between two sequences. Returns the value of $\sum_{i=1}^{N_1} \sum_{j=1}^{N_2} \epsilon_{ij} / (N_1 N_2) $, where $N_1$ and $N_2$ are the lengths of the two sequences, and $\epsilon_{ij}$ is the interaction strength between residues $i$ and $j$.
+        """
+        chi = np.mean( [[ self.eps_matr[ self.res_to_ind[r1], self.res_to_ind[r2] ] for r1 in seq1] for r2 in seq2] ) 
         return chi
-
-    def chi_eff(self, seq, norm=1.):
-        return self.chi_eff_pair(seq,seq,norm)
-
-    def chi_matr(self, seqs, norm=1.):
-        chi = np.array([[ self.chi_eff_pair(s1,s2,norm) for s1 in seqs] for s2 in seqs])
-        return chi
-    
-    def eps_pair(self,res1,res2):
-        return self.eps_matr[ self.res_to_ind[res1], self.res_to_ind[res2] ]
 
 
 
