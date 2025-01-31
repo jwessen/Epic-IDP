@@ -4,33 +4,6 @@
 
 EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered Proteins) is a Python package for calculating interaction strengths between intrinsically disordered proteins (IDPs), as quantified by a matrix of effective Flory-Huggins $\chi_{ij}$ parameters, using the IDP amino-acid sequences as input. The $\chi_{ij}$ parameters give information about the propensity to form phase-separated biomolecular condensates and about the partitioning of client proteins inside these condensates. The program accounts for short-range interactions using a mean-field treatment and for long-range electrostatic interactions using the random phase approximation (RPA) theory.
 
-### Background
-
-The main function of the program is to compute $\chi_{ij}$ using the following equation:
-
-$`
-\chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
-`$
-
-where the three terms correspond to:
-- $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$`\pi`$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
-- $`\left( \chi_{\rm e}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
-- $`\left( \chi_{\rm e}^{(1)} \right)_{ij}`$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.
-
-The individual contributions are given by
-
-$`
-( \chi_{\rm h}^{(0)} )_{ij} = - ( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) ) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
-`$
-
-$`
-\left( \chi_{\rm e}^{(0)} \right)_{ij} = - \frac{2 \pi l_{\rm B} \rho_0 }{\kappa^2} \sigma_i \sigma_j \, . 
-`$
-
-$`
-\left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
-`$
-
 ### Usage
 
 To use the package, you first define a `chi_effective_calculator` instance which takes interaction parameter values as input, e.g.
@@ -92,3 +65,32 @@ cec.calc_all_chi_eff()
 ### Example
 
 ![Effective Chi Parameter Calculation](chi_eff_sv_sequences.png)
+
+
+### Background
+
+The main function of the program is to compute $\chi_{ij}$ using the following equation:
+
+$`
+\chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
+`$
+
+where the three terms correspond to:
+- $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$`\pi`$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
+- $`\left( \chi_{\rm e}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
+- $`\left( \chi_{\rm e}^{(1)} \right)_{ij}`$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.
+
+The individual contributions are given by
+
+$`
+( \chi_{\rm h}^{(0)} )_{ij} = - \left( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
+`$
+
+$`
+\left( \chi_{\rm e}^{(0)} \right)_{ij} = - \frac{2 \pi l_{\rm B} \rho_0 }{\kappa^2} \sigma_i \sigma_j \, . 
+`$
+
+$`
+\left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
+`$
+
