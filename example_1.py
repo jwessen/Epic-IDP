@@ -1,8 +1,4 @@
 from epic_idp import chi_effective_calculator
-import numpy as np
-import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'Times New Roman'
-plt.rcParams['text.usetex'] = True
 
 # E/K 50-mer sequences from Das and Pappu, PNAS, 2013. DOI: https://www.pnas.org/doi/abs/10.1073/pnas.1304749110
 seqs = {}
@@ -36,7 +32,6 @@ seqs['sv27'] = 'KKEKKKEKKEEEEEEEEEEEEEEEEEEEEKEEKKKKKKKKKKKKKKKEKK'
 seqs['sv28'] = 'EKKKKKKKKKKKKKKKKKKKKKEEEEEEEEEEEEEEEEEEKKEEEEEKEK'
 seqs['sv29'] = 'KEEEEKEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKK'
 seqs['sv30'] = 'EEEEEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKKKK'
-
 seq_names = list(seqs.keys()) # All sequence names
 
 ######################################################################
@@ -44,7 +39,7 @@ seq_names = list(seqs.keys()) # All sequence names
 ######################################################################
 
 # Initialize chi_effective_calculator object
-cec = chi_effective_calculator(rho0=5.,lB=0.8,kappa=0.2,a=0.1/np.sqrt(6.))
+cec = chi_effective_calculator(rho0=5., lB=0.8, kappa=0.2, a=0.4)
 
 # Add all sequences to the chi_effective_calculator object
 for seq_name in seq_names:
@@ -56,8 +51,12 @@ chi_eff_matrix = cec.calc_all_chi_eff()
 ######################################################################
 ################# Visualize the results as a heatmap #################
 ######################################################################
+import numpy as np
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['text.usetex'] = True
 
-fig, ax = plt.subplots(figsize=(6,5))
+fig, ax = plt.subplots(figsize=(5,4.5))
 
 log_chi_eff_matrix = np.log10(chi_eff_matrix)
 vmin, vmax = np.min(log_chi_eff_matrix), np.max(log_chi_eff_matrix)
@@ -80,5 +79,5 @@ ax.set_yticklabels(seq_names, fontsize=8)
 ax.set_xlabel('Sequence 1')
 ax.set_ylabel('Sequence 2')
 
-plt.savefig('chi_eff_sv_sequences.png',dpi=300)
+plt.savefig('chi_eff_sv_sequences.png',dpi=300, bbox_inches='tight')
 plt.show()

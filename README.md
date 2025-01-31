@@ -1,73 +1,89 @@
-## EPIC-IDP: A Python tool for calculating effective interactions between intrinsically disordered proteins
+# EPIC-IDP: A Python tool for calculating effective interactions between intrinsically disordered proteins
 
-### About
+## About
 
 EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered Proteins) is a Python package for calculating interaction strengths between intrinsically disordered proteins (IDPs), as quantified by a matrix of effective Flory-Huggins $\chi_{ij}$ parameters, using the IDP amino-acid sequences as input. The $\chi_{ij}$ parameters give information about the propensity to form phase-separated biomolecular condensates and about the partitioning of client proteins inside these condensates. The program accounts for short-range interactions using a mean-field treatment and for long-range electrostatic interactions using the random phase approximation (RPA) theory.
 
-### Usage
+## Usage
 
-To use the package, you first define a `chi_effective_calculator` instance which takes interaction parameter values as input, e.g.
+To use the package, you need to copy the `epic_idp` folder to your working directory or add the path of the `epic_idp` folder to your Python path. You can then import the package using
 
 ```python
 from epic_idp import chi_effective_calculator
-
-cec = chi_effective_calculator( rho0  = 1.0,
-                                lB    = 2.0,
-                                kappa = 0.1,
-                                a     = 0.15,
-                                Vh0   = 0,
-                                interaction_matrix = 'KH-D' )
 ```
 
-The arguments correspond to:
+The main object of the package is the `chi_effective_calculator` class which is used to calculate the effective $\chi$ parameters between IDPs. An instance of the class is created by providing the interaction parameters as input. Sequences of the IDPs are then added using the `add_IDP` method. The effective $\chi$ parameters are calculated using the `calc_chi_eff` and `calc_all_chi_eff` methods.
 
-- `rho0` $\leftrightarrow \rho_0 b^3$
-- `lB` $\leftrightarrow l_{\rm B} / b$
-- `kappa` $\leftrightarrow \kappa b$
-- `a` $\leftrightarrow a$
-- `Vh0` $\leftrightarrow \int {\rm d} {\bf r} V_{\rm h}(|{\bf r}|)$
+### Example 1: Polyampholyte sequences
+The following example, based on the `example_1.py' script, demonstrates how to use the package to calculate the effective $\chi$ parameters for a set of 50-mer net-neutral artificial sequences of Lysine (K) and Glutamic Acid (E) residues. These 30 sequences are taken from Das and Pappu, PNAS, 2013 (https://www.pnas.org/doi/abs/10.1073/pnas.1304749110), and constitute a popular model system for studying aspects of electrostatically driven IDP phase separation. 
 
-The `interaction_matrix` argument refers to the data-set used for contact energies $\epsilon_{r,r'}$ and has to be one of the following:
-
-- `'KH-D'` (S3 Data in Dignon et al., 2018)
-- `'Mpipi'` (using the 20-by-20 matrix for amino-acid pairs, Joseph et al., 2021)
-- `'Mpipi_RNA'` (Using the 24-by-24 matrix including RNA bases, Joseph et al., 2021)
-- `'CALVADOS1'` (Using the original CALVADOS dataset, Tesei et al., 2021)
-- `'CALVADOS2'` (Using the updated CALVADOS dataset, Tesei et al., 2022)
-- `'HPS'` (Table S1 in Dignon et al., 2018)
-- `'URRY'` (Table S2 in Regy et al., 2021)
-- `'FB'` (Table S7 in Dannenhoffer-Lafage et al., 2021)
-
-After creating the `chi_effective_calculator` instance, we define which IDR sequences we are interested in. The IDR sequences are added sequentially with no upper limit on how many sequences can be added. For example:
+First, we import the `chi_effective_calculator`.
 
 ```python
-# Sequences in FASTA format
-sequences = [ 'EHHSGSQGPLLTTGDLGKEKTQ', 'RKQDEEERELRAKQEQEKELLRQKLLKEQEEK', 'AGREAKRR' ]
-
-# Names of the IDPs
-names = [ 'seq1', 'seq2', 'seq3' ]
-
-for seq, name in zip(sequences, names):
-   cec.add_IDP(name, seq)
+from epic_idp import chi_effective_calculator
 ```
 
-When adding an IDP, the program directly computes the double sum over residues in $g_i(k)$, defined in Eq.~\eqref{eq:g_def} which constitutes the most computationally heavy step of the effective $\chi$ parameter calculations. After all IDPs have been added, the $\chi_{ij}$ elements (with an overall factor $\rho_0$) are computed using the functions of the `chi_effective_calculator` instance, e.g.
-
+We next create the `chi_effective_calculator` instance as follows:
 ```python
-# Returns the effective chi-parameter for the seq1-seq2 pair
-cec.calc_chi_eff('seq1', 'seq2')
-
-# Returns the full M-by-M matrix of chi parameter (M is the number of added IDPs)
-cec.calc_all_chi_eff()
+cec = chi_effective_calculator(rho0=5., lB=0.8, kappa=0.2, a=0.4)
 ```
+The arguments, given in units of the residue-residue bond length $b$, are:
+- `rho0`: A reference density $\rho_0 b^3$ that only provides an overall multiplicative factor to the $\chi$ parameters.
+- `lB`: The Bjerrum length $l_{\rm B} / b$ which sets the strength of the electrostatic interactions.
+- `kappa`: The inverse screening length (or Debye length) $\kappa b$ which sets the range of the electrostatic interactions. 
+- `a`: A Gaussian smearing length $a/b$ that smoothly suppresses the electrostatic interactions at short distances.
 
+The sequences of interest are
+```python
+seqs = {}
+seqs['sv1']  = 'EKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEKEK'
+seqs['sv2']  = 'EEEKKKEEEKKKEEEKKKEEEKKKEEEKKKEEEKKKEEEKKKEEEKKKEK'
+seqs['sv3']  = 'KEKKKEKKEEKKEEKEKEKEKEEKKKEEKEKEKEKKKEEKEKEEKKEEEE'
+seqs['sv4']  = 'KEKEKKEEKEKKEEEKKEKEKEKKKEEKKKEEKEEKKEEKKKEEKEEEKE'
+seqs['sv5']  = 'KEKEEKEKKKEEEEKEKKKKEEKEKEKEKEEKKEEKKKKEEKEEKEKEKE'
+seqs['sv6']  = 'EEEKKEKKEEKEEKKEKKEKEEEKKKEKEEKKEEEKKKEKEEEEKKKKEK'
+seqs['sv7']  = 'EEEEKKKKEEEEKKKKEEEEKKKKEEEEKKKKEEEEKKKKEEEEKKKKEK'
+seqs['sv8']  = 'KKKKEEEEKKKKEEEEKKKKEEEEKKKKEEEEKKKKEEEEKKKKEEEEKE'
+seqs['sv9']  = 'EEKKEEEKEKEKEEEEEKKEKKEKKEKKKEEKEKEKKKEKKKKEKEEEKE'
+seqs['sv10'] = 'EKKKKKKEEKKKEEEEEKKKEEEKKKEKKEEKEKEEKEKKEKKEEKEEEE'
+seqs['sv11'] = 'EKEKKKKKEEEKKEKEEEEKEEEEKKKKKEKEEEKEEKKEEKEKKKEEKK'
+seqs['sv12'] = 'EKKEEEEEEKEKKEEEEKEKEKKEKEEKEKKEKKKEKKEEEKEKKKKEKK'
+seqs['sv13'] = 'KEKKKEKEKKEKKKEEEKKKEEEKEKKKEEKKEKKEKKEEEEEEEKEEKE'
+seqs['sv14'] = 'EKKEKEEKEEEEKKKKKEEKEKKEKKKKEKKKKKEEEEEEKEEKEKEKEE'
+seqs['sv15'] = 'KKEKKEKKKEKKEKKEEEKEKEKKEKKKKEKEKKEEEEEEEEKEEKKEEE'
+seqs['sv16'] = 'EKEKEEKKKEEKKKKEKKEKEEKKEKEKEKKEEEEEEEEEKEKKEKKKKE'
+seqs['sv17'] = 'EKEKKKKKKEKEKKKKEKEKKEKKEKEEEKEEKEKEKKEEKKEEEEEEEE'
+seqs['sv18'] = 'KEEKKEEEEEEEKEEKKKKKEKKKEKKEEEKKKEEKKKEEEEEEKKKKEK'
+seqs['sv19'] = 'EEEEEKKKKKEEEEEKKKKKEEEEEKKKKKEEEEEKKKKKEEEEEKKKKK'
+seqs['sv20'] = 'EEKEEEEEEKEEEKEEKKEEEKEKKEKKEKEEKKEKKKKKKKKKKKKEEE'
+seqs['sv21'] = 'EEEEEEEEEKEKKKKKEKEEKKKKKKEKKEKKKKEKKEEEEEEKEEEKKK'
+seqs['sv22'] = 'KEEEEKEEKEEKKKKEKEEKEKKKKKKKKKKKKEKKEEEEEEEEKEKEEE'
+seqs['sv23'] = 'EEEEEKEEEEEEEEEEEKEEKEKKKKKKEKKKKKKKEKEKKKKEKKEEKK'
+seqs['sv24'] = 'EEEEKEEEEEKEEEEEEEEEEEEKKKEEKKKKKEKKKKKKKEKKKKKKKK'
+seqs['sv25'] = 'EEEEEEEEEEEKEEEEKEEKEEKEKKKKKKKKKKKKKKKKKKEEKKEEKE'
+seqs['sv26'] = 'KEEEEEEEKEEKEEEEEEEEEKEEEEKEEKKKKKKKKKKKKKKKKKKKKE'
+seqs['sv27'] = 'KKEKKKEKKEEEEEEEEEEEEEEEEEEEEKEEKKKKKKKKKKKKKKKEKK'
+seqs['sv28'] = 'EKKKKKKKKKKKKKKKKKKKKKEEEEEEEEEEEEEEEEEEKKEEEEEKEK'
+seqs['sv29'] = 'KEEEEKEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKK'
+seqs['sv30'] = 'EEEEEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKKKK'
+seq_names = list(seqs.keys()) # All sequence names
+```
+We add these sequences to the `chi_effective_calculator` instance as follows:
+```python
+for seq_name in seq_names:
+    cec.add_IDP(seq_name, seqs[seq_name])
+```
+The 30-by-30 matrix of effective $\chi$ parameters is then calculated using the `calc_all_chi_eff` method:
+```python
+chi_eff_matrix = cec.calc_all_chi_eff()
+```
+If we only want the chi parameter between two specific sequences, we can instead call `cec.calc_chi_eff('sv10', 'sv25')`.
 
-### Example
+The resulting `chi_eff_matrix`is here visualized as a heatmap:
 
 ![Effective Chi Parameter Calculation](chi_eff_sv_sequences.png)
 
-
-### Background
+## Background
 
 The main function of the program is to compute $\chi_{ij}$ using the following equation:
 
@@ -93,4 +109,3 @@ $`
 $`
 \left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
 `$
-

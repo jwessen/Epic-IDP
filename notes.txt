@@ -1,0 +1,56 @@
+This is the previous readme.md text:
+
+To use the package, you first define a `chi_effective_calculator` instance which takes interaction parameter values as input, e.g.
+
+```python
+from epic_idp import chi_effective_calculator
+
+cec = chi_effective_calculator( rho0  = 1.0,
+                                lB    = 2.0,
+                                kappa = 0.1,
+                                a     = 0.15,
+                                Vh0   = 0,
+                                interaction_matrix = 'KH-D' )
+```
+
+The arguments correspond to:
+
+- `rho0` $\leftrightarrow \rho_0 b^3$
+- `lB` $\leftrightarrow l_{\rm B} / b$
+- `kappa` $\leftrightarrow \kappa b$
+- `a` $\leftrightarrow a$
+- `Vh0` $\leftrightarrow \int {\rm d} {\bf r} V_{\rm h}(|{\bf r}|)$
+
+The `interaction_matrix` argument refers to the data-set used for contact energies $\epsilon_{r,r'}$ and has to be one of the following:
+
+- `'KH-D'` (S3 Data in Dignon et al., 2018)
+- `'Mpipi'` (using the 20-by-20 matrix for amino-acid pairs, Joseph et al., 2021)
+- `'Mpipi_RNA'` (Using the 24-by-24 matrix including RNA bases, Joseph et al., 2021)
+- `'CALVADOS1'` (Using the original CALVADOS dataset, Tesei et al., 2021)
+- `'CALVADOS2'` (Using the updated CALVADOS dataset, Tesei et al., 2022)
+- `'HPS'` (Table S1 in Dignon et al., 2018)
+- `'URRY'` (Table S2 in Regy et al., 2021)
+- `'FB'` (Table S7 in Dannenhoffer-Lafage et al., 2021)
+
+After creating the `chi_effective_calculator` instance, we define which IDR sequences we are interested in. The IDR sequences are added sequentially with no upper limit on how many sequences can be added. For example:
+
+```python
+# Sequences in FASTA format
+sequences = [ 'EHHSGSQGPLLTTGDLGKEKTQ', 'RKQDEEERELRAKQEQEKELLRQKLLKEQEEK', 'AGREAKRR' ]
+
+# Names of the IDPs
+names = [ 'seq1', 'seq2', 'seq3' ]
+
+for seq, name in zip(sequences, names):
+   cec.add_IDP(name, seq)
+```
+
+When adding an IDP, the program directly computes the double sum over residues in $g_i(k)$, defined in Eq.~\eqref{eq:g_def} which constitutes the most computationally heavy step of the effective $\chi$ parameter calculations. After all IDPs have been added, the $\chi_{ij}$ elements (with an overall factor $\rho_0$) are computed using the functions of the `chi_effective_calculator` instance, e.g.
+
+```python
+# Returns the effective chi-parameter for the seq1-seq2 pair
+cec.calc_chi_eff('seq1', 'seq2')
+
+# Returns the full M-by-M matrix of chi parameter (M is the number of added IDPs)
+cec.calc_all_chi_eff()
+```
