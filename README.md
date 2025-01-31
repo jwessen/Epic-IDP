@@ -12,7 +12,7 @@ $$
 \chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
 $$
 where the three terms correspond to:
-- $\left( \chi_{\rm h}^{(0)} \right)_{ij}$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$\pi$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
+- $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$\pi$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
 - $\left( \chi_{\rm e}^{(0)} \right)_{ij}$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
 - $\left( \chi_{\rm e}^{(1)} \right)_{ij}$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.
 
