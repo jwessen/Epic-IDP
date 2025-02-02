@@ -2,7 +2,7 @@
 
 ## About
 
-EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered Proteins) is a Python package for calculating interaction strengths between intrinsically disordered proteins (IDPs), as quantified by a matrix of effective Flory-Huggins $\chi_{ij}$ parameters using the IDP amino-acid sequences as input. The $\chi_{ij}$ parameters give information about the propensity to form phase-separated biomolecular condensates and about the partitioning of client proteins inside these condensates. The program accounts for (1) short-range interactions using a mean-field treatment, and (2) long-range electrostatic interactions using the random phase approximation (RPA) theory.
+EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered Proteins) is a Python package for calculating interaction strengths between intrinsically disordered proteins (IDPs), as quantified by a matrix of effective Flory-Huggins $\chi_{ij}$ parameters, using the IDP amino-acid sequences as input. The $\chi_{ij}$ parameters give information about the propensity to form phase-separated biomolecular condensates and about the partitioning of client proteins inside these condensates. The program accounts for (1) short-range interactions using a mean-field treatment, and (2) long-range electrostatic interactions using the random phase approximation (RPA) theory.
 
 ## Usage
 
@@ -15,10 +15,13 @@ from epic_idp import chi_effective_calculator
 
 Note that the package requires `numpy` to be installed.
 
-The main object of the package is the `chi_effective_calculator` class which is used to calculate the effective $\chi$ parameters between IDPs. An instance of the class is created by providing the interaction parameters as input. Sequences of the IDPs are then added using the `add_IDP` method. The effective $\chi$ parameters are calculated using the `calc_chi_eff` and `calc_all_chi_eff` methods.
+The main object of the package is the `chi_effective_calculator` class which is used to calculate the effective $\chi$ parameters between IDPs through the following steps:
+- Create an instance of the `chi_effective_calculator` class providing interaction parameters (e.g. the Bjerrum length or short-range interaction parameter set) as input. 
+- Add the sequences of all IDPs of interest using the `add_IDP` method. 
+- Calculated the effective $\chi$ parameters are using the `calc_chi_eff` and `calc_all_chi_eff` methods.
 
 ### Example 1: Polyampholyte sequences
-The following example, based on the `example_1.py' script, demonstrates how to use the package to calculate the effective $\chi$ parameters for a set of 50-mer net-neutral artificial sequences of Lysine (K) and Glutamic Acid (E) residues. These 30 sequences are taken from Das and Pappu, PNAS, 2013 (https://www.pnas.org/doi/abs/10.1073/pnas.1304749110), and constitute a popular model system for studying aspects of electrostatically driven IDP phase separation. 
+The following example, based on the `example_1.py` script, demonstrates how to use the package to calculate the effective $\chi$ parameters for a set of 50-mer net-neutral artificial sequences of Lysine (K) and Glutamic Acid (E) residues. These 30 sequences are taken from Das and Pappu, PNAS, 2013 (https://www.pnas.org/doi/abs/10.1073/pnas.1304749110), and constitute a popular model system for studying aspects of electrostatically driven IDP phase separation. 
 
 First, we import the `chi_effective_calculator`.
 

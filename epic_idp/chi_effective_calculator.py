@@ -50,6 +50,8 @@ class chi_effective_calculator:
         Set the inverse Debye screening length.
     set_a(a)
         Set the smearing length for RPA integral.
+    set_Vh0(Vh0)
+        Set the volume integral of short-range interaction potential.
     """
 
     def __init__(self, rho0=1. , lB=9437.9 , kappa=11.861 , a=0.24651, Vh0 = 0, interaction_matrix='KH-D', electrostatics_RPA=True):
@@ -141,6 +143,16 @@ class chi_effective_calculator:
         """
         self.a = a
         self.Gamma4 = np.exp(-2.*a**2 * self.k2)
+    
+    def set_Vh0(self, Vh0):
+        """
+        Set the volume integral of short-range interaction potential Vh0.
+        """
+        self.Vh0 = Vh0
+        if Vh0 == 0:
+            self.hydrophobicity_MFT = False
+        else:
+            self.hydrophobicity_MFT = True
 
     # Add a sequence
     def add_IDP(self, name, sequence, g0 = None, verbose=True):
