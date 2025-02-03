@@ -91,6 +91,14 @@ The resulting `chi_eff_matrix`is here visualized as a heatmap:
 
 ## Background
 
+A common approach to study the phase behaviour of IDPs is the Flory-Huggins model, defined by the free energy density
+
+$`
+f(\{ \phi_i \}) = \sum_i \frac{\phi_i}{N_i} \log \phi_i + \phi_{\rm w} \log\phi_{\rm w} - \sum_{i,j} \chi_{ij} \phi_i \phi_j
+`$
+
+
+
 The main function of the program is to compute $\chi_{ij}$ using the following equation:
 
 $`
