@@ -21,7 +21,7 @@ The main object of the package is the `chi_effective_calculator` class which is 
 - Calculated the effective $\chi$ parameters are using the `calc_chi_eff` and `calc_all_chi_eff` methods.
 
 ### Example 1: Polyampholyte sequences
-The following example, based on the `example_1.py` script, demonstrates how to use the package to calculate the effective $\chi$ parameters for a set of 50-mer net-neutral artificial sequences of Lysine (K) and Glutamic Acid (E) residues. These 30 sequences are taken from Das and Pappu, PNAS, 2013 (https://www.pnas.org/doi/abs/10.1073/pnas.1304749110), and constitute a popular model system for studying aspects of electrostatically driven IDP phase separation. 
+The following example, based on the `example_1.py` script, demonstrates how to use the package to calculate the effective $\chi$ parameters among a set of 50-mer net-neutral artificial sequences of Lysine (K) and Glutamic Acid (E) residues. These 30 sequences are taken from Das and Pappu, PNAS, 2013 (https://www.pnas.org/doi/abs/10.1073/pnas.1304749110), and constitute a popular model system for studying aspects of electrostatically driven IDP phase separation. 
 
 First, we import the `chi_effective_calculator`.
 
@@ -145,7 +145,7 @@ $`
 Here, $`r^{(i)}_\alpha`$ denotes the amino-acid type of residue $\alpha$ on an IDP type-$i$ molecule This term follows from assuming that the pair-wise short-range interaction potential between two residues of types $`r`$ and $`r'`$ is described by
 
 $`
-V_{r,r'}(|\mathbf{r}|) = \varepsilon_{r,r'} V_{\rm h}(|\mathbf{r}|) \, ,
+V_{r,r'}(|\bf{r}|) = \varepsilon_{r,r'} V_{\rm h}(|\mathbf{r}|) \, ,
 `$
 
 i.e., as a residue-universal interaction potential $`V_{\rm h}(|\mathbf{r}|)`$ multiplied by residue-specific interaction strengths $`\varepsilon_{r,r'}`$. The entries in the interaction matrix $`\varepsilon_{r,r'}`$ may be gleaned from existing molecular force fields. In the EPIC-IDP module, the interaction matrix is specified by the `interaction_matrix` argument of the `chi_effective_calculator` class, and can be one of the following:
