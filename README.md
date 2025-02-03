@@ -10,7 +10,7 @@ EPIC-IDP (Effective Protein Interaction Calculator for Intrinsically Disordered 
 To use the package, you need to copy the `epic_idp` folder to your working directory or add the path of the `epic_idp` folder to your Python path. You can then import the package using
 
 ```python
-from epic_idp import chi_effective_calculator
+import epic_idp
 ```
 
 Note that the package requires `numpy` to be installed.
@@ -97,15 +97,19 @@ $`
 f(\{ \phi_i \}) = \sum_i \frac{\phi_i}{N_i} \log \phi_i + \phi_{\rm w} \log\phi_{\rm w} - \sum_{i,j} \chi_{ij} \phi_i \phi_j
 `$
 
-Here,
+Here, $\phi_i$ and $N_i$ are the volume fraction and chain length of species $i$, respectively, and $\phi_{\rm w}$ is the volume fraction of the solvent which is given by $\phi_{\rm w} = 1 - \sum_i \phi_i$. The interaction strength between species $i$ and $j$ is given by the Flory-Huggins parameter $\chi_{ij}$, which may drive phase separation as well as governs the partitioning of client proteins into the condensates.
 
-The main function of the program is to compute $\chi_{ij}$ using the following equation:
+The $\chi_{ij}$ are often treated as phenomenological parameters that are tuned to fit e.g. experiment or simulation data. However, fundamentally, the $\chi_{ij}$ parameters stem from the underlying interactions at the molecular level between the amino-acid residues of the involved proteins. Given a microscopic model Hamiltonian for the interactions between the amino-acid residues, and the amino-acid sequences of the involved proteins, it is therefore in principle possible to estimate the $\chi_{ij}$ parameters from first principles. 
+
+In Wessén *et al.*, J. Phys. Chem. B, 2022 (https://pubs.acs.org/doi/10.1021/acs.jpcb.2c06181), a field-theoretic model for IDP phase separation is formulated based on a microscopic interaction Hamiltonian that includes pair-wise amino-acid interactions through long-range electrostatic (Coulomb) forces and short-range non-electrostatic (e.g., hydrophobic or cation-$\pi$) interactions. The field theory is approximately solved using a mean-field treatment of the short-range interactions and the random phase approximation (RPA) for the long-range electrostatic interactions. At this level of approximation, the short-range interactions lead to a quadratic term (in polymer density) in the free energy, where the coefficient defines a contribution to the effective $\chi_{ij}$ parameters. The long-range electrostatic interactions lead to an integral free energy term that, formally, contains contributions of all powers of the polymer density. In the expansion of the RPA integral in powers of $\phi_i$, the quadratic term defines the RPA contribution to the effective $\chi_{ij}$ parameters.
+
+The EPIC-IDP package implements the calculation of the effective $\chi_{ij}$ parameters based on the above model. The $\chi_{ij}$ parameters are computed as the sum of three terms,
 
 $`
 \chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
 `$
 
-where the three terms correspond to:
+where the three contributions correspond to:
 - $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$`\pi`$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
 - $`\left( \chi_{\rm e}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
 - $`\left( \chi_{\rm e}^{(1)} \right)_{ij}`$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.

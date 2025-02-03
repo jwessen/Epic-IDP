@@ -76,8 +76,8 @@ ax.set_yticks(np.arange(len(seq_names)))
 ax.set_xticklabels(seq_names,rotation=90, fontsize=8)
 ax.set_yticklabels(seq_names, fontsize=8)
 
-ax.set_xlabel('Sequence i')
-ax.set_ylabel('Sequence j')
+ax.set_xlabel(r'Sequence $i$')
+ax.set_ylabel(r'Sequence $j$')
 
 plt.savefig('chi_eff_sv_sequences.png',dpi=300, bbox_inches='tight')
 plt.show()
