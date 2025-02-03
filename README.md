@@ -101,29 +101,59 @@ Here, $\phi_i$ and $N_i$ are the volume fraction and chain length of species $i$
 
 The $\chi_{ij}$ are often treated as phenomenological parameters that are tuned to fit e.g. experiment or simulation data. However, fundamentally, the $\chi_{ij}$ parameters stem from the underlying interactions at the molecular level between the amino-acid residues of the involved proteins. Given a microscopic model Hamiltonian for the interactions between the amino-acid residues, and the amino-acid sequences of the involved proteins, it is therefore in principle possible to estimate the $\chi_{ij}$ parameters from first principles. 
 
-In Wessén *et al.*, J. Phys. Chem. B, 2022 (https://pubs.acs.org/doi/10.1021/acs.jpcb.2c06181), a field-theoretic model for IDP phase separation is formulated based on a microscopic interaction Hamiltonian that includes pair-wise amino-acid interactions through long-range electrostatic (Coulomb) forces and short-range non-electrostatic (e.g., hydrophobic or cation-$\pi$) interactions. The field theory is approximately solved using a mean-field treatment of the short-range interactions and the random phase approximation (RPA) for the long-range electrostatic interactions. At this level of approximation, the short-range interactions lead to a quadratic term (in polymer density) in the free energy, where the coefficient defines a contribution to the effective $\chi_{ij}$ parameters. The long-range electrostatic interactions lead to an integral free energy term that, formally, contains contributions of all powers of the polymer density. In the expansion of the RPA integral in powers of $\phi_i$, the quadratic term defines the RPA contribution to the effective $\chi_{ij}$ parameters.
+In Wessén *et al.*, J. Phys. Chem. B, 2022 (https://pubs.acs.org/doi/10.1021/acs.jpcb.2c06181), a field-theoretic model for IDP phase separation is formulated based on a microscopic interaction Hamiltonian that includes pair-wise amino-acid interactions through long-range electrostatic (Coulomb) forces and short-range non-electrostatic (e.g., hydrophobic or cation-$`\pi`$) interactions. The field theory is approximately solved using a mean-field treatment of the short-range interactions and the random phase approximation (RPA) for the long-range electrostatic interactions. At this level of approximation, the short-range interactions lead to a quadratic term (in polymer density) in the free energy, where the coefficient defines a contribution to the effective $\chi_{ij}$ parameters. The long-range electrostatic interactions lead to an integral free energy term that, formally, contains contributions of all powers of the polymer density. In the expansion of the RPA integral in powers of $\phi_i$, the quadratic term defines the RPA contribution to the effective $\chi_{ij}$ parameters.
 
 The EPIC-IDP package implements the calculation of the effective $\chi_{ij}$ parameters based on the above model. The $\chi_{ij}$ parameters are computed as the sum of three terms,
 
 $`
-\chi_{ij} = \left( \chi_{\rm h}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} 
+\chi_{ij} = \left( \chi_{\rm e}^{(0)} \right)_{ij} + \left( \chi_{\rm e}^{(1)} \right)_{ij} + \left( \chi_{\rm h}^{(0)} \right)_{ij}
 `$
 
 where the three contributions correspond to:
-- $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$`\pi`$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence), of the involved proteins.
 - $`\left( \chi_{\rm e}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of long-range electrostatic interactions. This only depends on the net charge per chain of the two proteins.
 - $`\left( \chi_{\rm e}^{(1)} \right)_{ij}`$: The first order correction from electrostatic interactions that follows from RPA theory. This term accounts for charge sequence patterns in the amino-acid sequences, and can thus distinguish between IDPs with same composition but different sequences.
+- $`\left( \chi_{\rm h}^{(0)} \right)_{ij}`$: Effective $\chi_{ij}$ parameter following from a mean-field treatment of short-range non-electrostatic interactions (e.g., hydrophobic interactions or cation-$`\pi`$ interactions). This only depends on the amino-acid content (composition), but not the residue order (sequence) in the involved proteins.
 
-The individual contributions are given by
+The first term is given by
+
+$`
+\left( \chi_{\rm e}^{(0)} \right)_{ij} = - \frac{2 \pi l_{\rm B} \rho_0 }{\kappa^2} \frac{1}{N_i} \left( \sum_{\alpha = 1}^{N_i} \sigma_{i,\alpha} \right)  \frac{1}{N_j} \left( \sum_{\alpha = 1}^{N_j} \sigma_{j,\alpha} \right) 
+`$
+
+where $`\sigma_{i,\alpha}`$ is the electric charge of the $\alpha$-th residue on a chain of species $i$. This term also depends on the Bjerrum length $`l_{\rm B} = e^2 / (4 \pi \varepsilon_0 \varepsilon_{\rm r} k_{\rm B} T)`$, the inverse Debye screening length $\kappa$, and an over-all the reference density $\rho_0$. In an NaCl solution, the screening length is related to the salt concentration as $`\kappa = \sqrt{8 \pi l_{\rm B} [{\rm NaCl}] }`$ such that $`\chi_{\rm e}^{(0)}`$ is temperature-independent and inversely proportional to the salt concentration.
+
+The second term is given by
+
+$`
+\left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
+`$
+
+where
+
+$`
+g_i(k) = \hat{\Gamma}(k)^2 \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_i} \sigma_{i,\alpha} \sigma_{i,\beta} \, {\rm e}^{-|\alpha-\beta| k^2 b^2/6} 
+`$
+
+is a type of form-factor for the charge density of a single IDP species of type $i$, modelled as a chain with Kuhn length $`b`$. $`\hat{\Gamma}(k)`$ describes the spatial distribution  of charge for a single residue, taken to be a smearerd Gaussian with width $`a`$, i.e., $\hat{\Gamma}(k) = \exp(-k^2 a^2/2)$. 
+
+The final term is given by
 
 $`
 ( \chi_{\rm h}^{(0)} )_{ij} = - \left( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
 `$
 
-$`
-\left( \chi_{\rm e}^{(0)} \right)_{ij} = - \frac{2 \pi l_{\rm B} \rho_0 }{\kappa^2} \sigma_i \sigma_j \, . 
-`$
+Here, $`r^{(i)}_\alpha`$ denotes the amino-acid type of residue $\alpha$ on an IDP type-$i$ molecule This term follows from assuming that the pair-wise short-range interaction potential between two residues of types $`r`$ and $`r'`$ is described by
 
 $`
-\left( \chi_{\rm e}^{(1)} \right)_{ij} = 2 \pi l_{\rm B}^2 \rho_0 \int_0^{\infty}  {\rm d} k \frac{k^2}{\left( k^2 +  \kappa^2 \right)^2} \frac{g_i(k)}{N_i}\frac{g_j(k)}{N_j} 
+V_{r,r'}(|\mathbf{r}|) = \varepsilon_{r,r'} V_{\rm h}(|\mathbf{r}|) \, ,
 `$
+
+i.e., as a residue-universal interaction potential $`V_{\rm h}(|\mathbf{r}|)`$ multiplied by residue-specific interaction strengths $`\varepsilon_{r,r'}`$. The entries in the interaction matrix $`\varepsilon_{r,r'}`$ may be gleaned from existing molecular force fields. In the EPIC-IDP module, the interaction matrix is specified by the `interaction_matrix` argument of the `chi_effective_calculator` class, and can be one of the following:
+- `'KH-D'`: Table S3 Data in Dignon et al., 2018 (https://doi.org/10.1371/journal.pcbi.1005941)
+- `'Mpipi'`: The 20-by-20 matrix for amino-acid pairs in the Mpipi force field, Joseph et al., 2021 (https://doi.org/10.1038/s43588-021-00155-3)
+- `'Mpipi_RNA'`: The 24-by-24 matrix including RNA bases in the Mpipi force field. RNA bases are denoted by lower-case letters (`a`, `c`, `g` and `u`) to distinguish them from amino-acids.
+- `'CALVADOS1'`: The original CALVADOS hydrophobicity scale in Tesei et al., 2021 (https://doi.org/10.1073/pnas.2111696118)
+- `'CALVADOS2'`: The updated CALVADOS hydrophobicity scale in Tesei et al., 2022 (https://doi.org/10.12688/openreseurope.14967.2)
+- `'HPS'`: Table S1 in Dignon et al., 2018 (https://doi.org/10.1371/journal.pcbi.1005941)
+- `'URRY'`: Table S2 in Regy et al., 2021 (https://doi.org/10.1002/pro.4094)
+- `'FB'`: Table S7 in Dannenhoffer-Lafage et al., 2021 (https://doi.org/10.1021/acs.jpcb.0c11479)
