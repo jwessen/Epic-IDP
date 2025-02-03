@@ -139,16 +139,16 @@ is a type of form-factor for the charge density of a single IDP species of type 
 The final term is given by
 
 $`
-( \chi_{\rm h}^{(0)} )_{ij} = - \left( \int \mathrm{d} \mathbf{r} \, V_{\rm h}(|\mathbf{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
+( \chi_{\rm h}^{(0)} )_{ij} = - \left( \int \mathrm{d} \vec{r} \, V_{\rm h}(|\vec{r}|) \right) \frac{\rho_0}{2N_i N_j} \sum_{\alpha=1}^{N_i} \sum_{\beta = 1}^{N_j} \varepsilon_{r^{(i)}_\alpha , r^{(j)}_\beta } \, . 
 `$
 
-Here, $`r^{(i)}_\alpha`$ denotes the amino-acid type of residue $\alpha$ on an IDP type-$i$ molecule This term follows from assuming that the pair-wise short-range interaction potential between two residues of types $`r`$ and $`r'`$ is described by
+Here, $`r^{(i)}_\alpha`$ denotes the amino-acid type of residue $\alpha$ on an IDP type-$i$ molecule This term follows from assuming that the pair-wise short-range interaction potential between two residues of types $`r`$ and $`r'`$, separated by a distance $`|\vec{r}|`$, is described by
 
 $`
-V_{r,r'}(|\bf{r}|) = \varepsilon_{r,r'} V_{\rm h}(|\mathbf{r}|) \, ,
+V_{r,r'}(|\vec{r}|) = \varepsilon_{r,r'} V_{\rm h}(|\vec{r}|) \, ,
 `$
 
-i.e., as a residue-universal interaction potential $`V_{\rm h}(|\mathbf{r}|)`$ multiplied by residue-specific interaction strengths $`\varepsilon_{r,r'}`$. The entries in the interaction matrix $`\varepsilon_{r,r'}`$ may be gleaned from existing molecular force fields. In the EPIC-IDP module, the interaction matrix is specified by the `interaction_matrix` argument of the `chi_effective_calculator` class, and can be one of the following:
+i.e., as a residue-universal interaction potential $`V_{\rm h}(|\vec{r}|)`$ multiplied by residue-specific interaction strengths $`\varepsilon_{r,r'}`$. The entries in the interaction matrix $`\varepsilon_{r,r'}`$ may be gleaned from existing molecular force fields. In the EPIC-IDP module, the interaction matrix is specified by the `interaction_matrix` argument of the `chi_effective_calculator` class, and can be one of the following:
 - `'KH-D'`: Table S3 Data in Dignon et al., 2018 (https://doi.org/10.1371/journal.pcbi.1005941)
 - `'Mpipi'`: The 20-by-20 matrix for amino-acid pairs in the Mpipi force field, Joseph et al., 2021 (https://doi.org/10.1038/s43588-021-00155-3)
 - `'Mpipi_RNA'`: The 24-by-24 matrix including RNA bases in the Mpipi force field. RNA bases are denoted by lower-case letters (`a`, `c`, `g` and `u`) to distinguish them from amino-acids.
