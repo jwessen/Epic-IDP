@@ -300,4 +300,4 @@ class _GaussianChain:
             connection_tensor = np.exp( - np.einsum('ab,i->abi', res_diff, b2k2_over_6) )
             self.g0 = np.einsum( 'a,b,abi->i', self.sig, self.sig, connection_tensor ) / self.N
         else:
-            self.g0 = g0
+            self.g0 = np.copy(g0)

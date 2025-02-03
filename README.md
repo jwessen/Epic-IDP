@@ -87,7 +87,48 @@ If we only want the chi parameter between two specific sequences, we can instead
 
 The resulting `chi_eff_matrix`is here visualized as a heatmap:
 
-![Effective Chi Parameter Calculation](chi_eff_sv_sequences.png)
+![Effective Chi Parameters for sv sequences](example_1.png)
+
+### Example 2: A1-LCD Variants
+
+In this example, we consider variants of the low-complexity domain (LCD) the heterogeneous nuclear ribonucleoprotein A1 (hnRNPA1), referred to as A1-LCD. This set of sequences have been studied experimentally (Bremer *et. al*, Nat Chem 2022, https://doi.org/10.1038/s41557-021-00840-w) and form part of the basis for the Mpipi force field (Joseph *et. al*, Nat Comp Sci 2021, https://doi.org/10.1038/s43588-021-00155-3). The code for this example is given in the `example_2.py` script.
+
+The sequences are:
+
+```python
+seqs = {}
+seqs['WT']      =   'MASASSSQRGRSGSGNFGGGRGGGFGGNDNFGRGGNFSGRGGFGGSRGGGGYGGSGDGYNGFGNDGSNFGGGGSYNDFGNYNNQSSNFGPMKGGNFGGRSSGPYGGGGQYFAKPRNQGGYGGSSSSSSYGSGRRF'
+seqs['-3R+3K']  =   'MASASSSQRGKSGSGNFGGGRGGGFGGNDNFGRGGNFSGRGGFGGSKGGGGYGGSGDGYNGFGNDGSNFGGGGSYNDFGNYNNQSSNFGPMKGGNFGGRSSGGSGGGGQYFAKPRNQGGYGGSSSSSSYGSGRKF'
+seqs['-4F-2Y']  =   'MASASSSQRGRSGSGNSGGGRGGGFGGNDNFGRGGNSSGRGGFGGSRGGGGYGGSGDGYNGFGNDGSNSGGGGSSNDFGNYNNQSSNFGPMKGGNFGGRSSGGSGGGGQYSAKPRNQGGYGGSSSSSSSGSGRRF'
+seqs['-6R+6K']  =   'MASASSSQKGKSGSGNFGGGRGGGFGGNDNFGKGGNFSGRGGFGGSKGGGGYGGSGDGYNGFGNDGSNFGGGGSYNDFGNYNNQSSNFGPMKGGNFGGKSSGGSGGGGQYFAKPRNQGGYGGSSSSSSYGSGRKF'
+seqs['+7F-7Y']  =   'MASASSSQRGRSGSGNFGGGRGGGFGGNDNFGRGGNFSGRGGFGGSRGGGGFGGSGDGFNGFGNDGSNFGGGGSFNDFGNFNNQSSNFGPMKGGNFGGRSSGGSGGGGQFFAKPRNQGGFGGSSSSSSFGSGRRF'
+seqs['+7K+12D'] =   'MASADSSQRDRDDKGNFGDGRGGGFGGNDNFGRGGNFSDRGGFGGSRGDGKYGGDGDKYNGFGNDGKNFGGGGSYNDFGNYNNQSSNFDPKMGGNFKDRSSGPYDKGGQYFAKPRNQGGYGGSSSSKSYGSDRRF'
+seqs['+7R+12D'] =   'MASADSSQRDRDDRGNFGDGRGGGFGGNDNFGRGGNFSDRGGFGGSRGDGRYGGDGDRYNGFGNDGRNFGGGGSYNDFGNYNNQSSNFDPKMGGNFRDRSSGPYDRGGQYFAKPRNQGGYGGSSSSRSYGSDRRF'
+seqs['-9F+3Y']  =   'MASASSSQRGRSGSGNFGGGRGGGYGGNDNGGRGGNYSGRGGFGGSRGGGGYGGSGDGYNGGGNDGSNYGGGGSYNDSGNGNNQSSNFGPMKGGNYGGRSSGGSGGGGQYGAKPRNQGGYGGSSSSSSYGSGRRS'
+seqs['-12F+12Y']=   'MASASSSQRGRSGSGNYGGGRGGGYGGNDNYGRGGNYSGRGGYGGSRGGGGYGGSGDGYNGYGNDGSNYGGGGSYNDYGNYNNQSSNYGPMKGGNYGGRSSGGSGGGGQYYAKPRNQGGYGGSSSSSSYGSGRRY'
+seq_names = list(seqs.keys()) # All sequence names
+```
+
+The `chi_effective_calculator` instance is now created with the `interaction_matrix` argument set to `'Mpipi'` to account for the Mpipi force field interaction matrix for short-range interactions.
+```python
+cec = chi_effective_calculator(rho0=1., lB=1.7, kappa=0.75, a=0.1, Vh0=3.0, interaction_matrix='Mpipi')
+```
+
+The sequences are added to the `chi_effective_calculator` instance as before:
+```python
+for seq_name in seq_names:
+    cec.add_IDP(seq_name, seqs[seq_name])
+```
+
+The 9-by-9 matrix of effective $\chi$ parameters is then calculated using the `calc_all_chi_eff` method:
+```python
+chi_eff_matrix = cec.calc_all_chi_eff()
+```
+The results are shown here:
+
+![Effective Chi Parameters for sv sequences](example_2.png)
+
+The left panel shows the diagonal elements $\chi_{ii}$, quantifying the strengths of the self-interactions of the IDPs, against the upper-critical solution temperatures of the corresponding A1-LCD variants, computed in simulations by Bremer *et. al* using Mpipi. The right panel shows all elements of the $\chi$ matrix illustrating the predicted pairwise interaction strengths between the A1-LCD variants.
 
 ## Background
 

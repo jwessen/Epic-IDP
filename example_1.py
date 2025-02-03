@@ -34,6 +34,7 @@ seqs['sv29'] = 'KEEEEKEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKK'
 seqs['sv30'] = 'EEEEEEEEEEEEEEEEEEEEEEEEEKKKKKKKKKKKKKKKKKKKKKKKKK'
 seq_names = list(seqs.keys()) # All sequence names
 
+
 ######################################################################
 ######### Use EPIC-IDP to calculate effective chi parameters #########
 ######################################################################
@@ -48,9 +49,11 @@ for seq_name in seq_names:
 # Calculate the effective chi parameters between all sequence pairs
 chi_eff_matrix = cec.calc_all_chi_eff()
 
+
 ######################################################################
 ################# Visualize the results as a heatmap #################
 ######################################################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams['font.family'] = 'Times New Roman'
@@ -79,5 +82,5 @@ ax.set_yticklabels(seq_names, fontsize=8)
 ax.set_xlabel(r'Sequence $i$')
 ax.set_ylabel(r'Sequence $j$')
 
-plt.savefig('chi_eff_sv_sequences.png',dpi=300, bbox_inches='tight')
+plt.savefig('example_1.png',dpi=300, bbox_inches='tight')
 plt.show()
