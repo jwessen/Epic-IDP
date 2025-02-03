@@ -97,7 +97,7 @@ $`
 f(\{ \phi_i \}) = \sum_i \frac{\phi_i}{N_i} \log \phi_i + \phi_{\rm w} \log\phi_{\rm w} - \sum_{i,j} \chi_{ij} \phi_i \phi_j
 `$
 
-
+Here,
 
 The main function of the program is to compute $\chi_{ij}$ using the following equation:
 
