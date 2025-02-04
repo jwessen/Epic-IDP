@@ -128,7 +128,7 @@ The results are shown here:
 
 ![Effective Chi Parameters for sv sequences](example_2.png)
 
-The left panel shows the diagonal elements $`\chi_{ii}`$, quantifying the strengths of the self-interactions of the IDPs, against the upper-critical solution temperatures of the corresponding A1-LCD variants, computed in simulations by Bremer *et. al* using Mpipi. The right panel shows all elements of the $\chi$ matrix illustrating the predicted pairwise interaction strengths between the A1-LCD variants.
+The left panel shows the diagonal elements $`\chi_{ii}`$, quantifying the strengths of the self-interactions of the IDPs, against the upper-critical solution temperatures $T_{\rm c}$ of the corresponding A1-LCD variants, computed in simulations by Bremer *et. al* using Mpipi. The right panel shows all elements of the $\chi$ matrix illustrating the predicted pairwise interaction strengths between the A1-LCD variants.
 
 ## Background
 

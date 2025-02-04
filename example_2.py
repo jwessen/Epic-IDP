@@ -109,7 +109,7 @@ for i, sn in enumerate(seq_names):
     ax.text(X, Y, sn, fontsize=10, color='C'+str(i), va='bottom')
 
 ax.set_xlabel(r'$\chi_{ii}$')
-ax.set_ylabel(r'$T_c / {\rm K}$ (Mpipi)')
+ax.set_ylabel(r'$T_{\rm c} / {\rm K}$ (Mpipi)')
 
 axes[1].axis('off')
 
