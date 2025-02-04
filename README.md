@@ -91,7 +91,7 @@ The resulting `chi_eff_matrix`is here visualized as a heatmap:
 
 ### Example 2: A1-LCD Variants
 
-In this example, we consider variants of the low-complexity domain (LCD) the heterogeneous nuclear ribonucleoprotein A1 (hnRNPA1), referred to as A1-LCD. This set of sequences have been studied experimentally (Bremer *et. al*, Nat Chem 2022, https://doi.org/10.1038/s41557-021-00840-w) and form part of the basis for the Mpipi force field (Joseph *et. al*, Nat Comp Sci 2021, https://doi.org/10.1038/s43588-021-00155-3). The code for this example is given in the `example_2.py` script.
+In this example, we consider variants of the low-complexity domain (LCD) the heterogeneous nuclear ribonucleoprotein A1 (hnRNPA1), referred to as A1-LCD. These sequences have been studied experimentally (Bremer *et. al*, Nat Chem 2022, https://doi.org/10.1038/s41557-021-00840-w) and form part of the basis for the Mpipi force field (Joseph *et. al*, Nat Comp Sci 2021, https://doi.org/10.1038/s43588-021-00155-3). The code for this example is given in the `example_2.py` script.
 
 The sequences are:
 
