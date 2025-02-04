@@ -56,7 +56,7 @@ seqs['-12F+12Y']=   'MASASSSQRG'+'RSGSGNYGGG'+'RGGGYGGNDN'+'YGRGGNYSGR'+'GGYGGSR
 #seq_names = list(seqs.keys()) # All sequence names
 
 # Order seq_names according to T_c
-idx = np.argsort( np.array(list(Tc_sim.values())) )[::-1]
+idx = np.argsort( np.array(list(Tc_sim.values())) )
 seq_names = np.array(list(Tc_sim.keys()))[idx]
 
 ######################################################################
